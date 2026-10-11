@@ -3,7 +3,7 @@
 # Resolve the script's real directory, following symlinks
 SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
-mkdir -p ${SCRIPT_DIR}/sandbox-home
+mkdir -p "${SCRIPT_DIR}/sandbox-home"
 
 WORKSPACE=$(basename "$(pwd)")
 USERNAME=$(id -un)

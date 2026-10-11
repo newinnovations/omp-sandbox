@@ -16,7 +16,7 @@ RUN apt-get update \
 # Create the user and group for the development environment
 RUN /sbin/groupadd --gid $USER_GID $GROUPNAME \
     && /sbin/useradd --uid $USER_UID --gid $USER_GID -m -g $GROUPNAME $USERNAME \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && echo "$USERNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
 # Copy the entrypoint script and other scripts into the image
