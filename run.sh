@@ -1,6 +1,7 @@
 #!/bin/bash
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# Resolve the script's real directory, following symlinks
+SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
 
 mkdir -p ${SCRIPT_DIR}/sandbox-home
 
