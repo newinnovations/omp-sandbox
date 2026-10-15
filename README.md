@@ -56,13 +56,19 @@ cd /path/to/your/project
 
 You land in a `bash` shell at `~/<project-name>`, with your project's files mounted read-write and a persistent, isolated `$HOME`. On the very first run — and again automatically every 3 days — the container installs/updates Rust, Node LTS, `uv`, and `omp`.
 
+Pass host devices to the container with one `-d DEVICE` option per device; each is forwarded to Docker as `--device`:
+
+```bash
+/path/to/omp-sandbox/run.sh -d /dev/ttyUSB0 -d /dev/video0
+```
+
 ## What each script does
 
 | Script | Runs where | Purpose |
 | --- | --- | --- |
 | `Dockerfile` | build time | Base image (`buildpack-deps:trixie`) + `sudo`, `ripgrep`, `vim`, `clang`, `libgtk-4-dev`; creates a non-root user matching your host UID/GID; snapshots the fresh home directory to `/seed/home/<user>` for later seeding. |
 | `build-docker.sh` | host | Builds the `omp-sandbox` image, passing your current `id -u`/`id -g`/username/groupname as build args so in-container file ownership matches your host user. |
-| `run.sh` | host | Runs the container: mounts `./sandbox-home` as `$HOME` and the current working directory as the workspace, `-h sandbox` for a recognizable prompt, `--rm -it` for a disposable interactive session. Cleans up the empty workspace mountpoint directory left behind in `sandbox-home/` after exit. |
+| `run.sh` | host | Runs the container, forwarding each `-d DEVICE` option as a Docker `--device` mapping; mounts `./sandbox-home` as `$HOME` and the current working directory as the workspace; cleans up the empty workspace mountpoint directory after exit. |
 | `entrypoint.sh` | container, every start | Seeds `$HOME` from the image's `/seed` snapshot on first use, conditionally invokes `update-toolchain`, then `exec`s the container's `CMD` (default: `bash`). |
 | `toolchain.sh` (installed as `/usr/local/bin/update-toolchain`) | container | Idempotently installs or updates `rustup` + the `stable` toolchain, `nvm` + Node LTS, `uv`, and `omp`; touches `~/.toolchain_last_updated` as a cache marker. |
 

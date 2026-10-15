@@ -1,4 +1,21 @@
 #!/bin/bash
+DEVICES=()
+while (($#)); do
+    case "$1" in
+        -d)
+            if (($# < 2)) || [[ -z "$2" ]]; then
+                printf 'Usage: %s [-d DEVICE]...\n' "${0##*/}" >&2
+                exit 2
+            fi
+            DEVICES+=(--device "$2")
+            shift 2
+            ;;
+        *)
+            printf 'Usage: %s [-d DEVICE]...\n' "${0##*/}" >&2
+            exit 2
+            ;;
+    esac
+done
 
 # Resolve the script's real directory, following symlinks
 SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
@@ -9,6 +26,7 @@ WORKSPACE=$(basename "$(pwd)")
 USERNAME=$(id -un)
 
 docker run --rm -it \
+    "${DEVICES[@]}" \
     -h sandbox \
     --user $(id -u):$(id -g) \
     -v "${SCRIPT_DIR}/sandbox-home":"/home/$USERNAME" \
