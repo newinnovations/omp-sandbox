@@ -25,10 +25,11 @@ mkdir -p "${SCRIPT_DIR}/sandbox-home"
 WORKSPACE=$(basename "$(pwd)")
 USERNAME=$(id -un)
 
+
 docker run --rm -it \
     "${DEVICES[@]}" \
     -h sandbox \
-    --user $(id -u):$(id -g) \
+    --user $(id -u):$(id -g) --group-add dialout \
     -v "${SCRIPT_DIR}/sandbox-home":"/home/$USERNAME" \
     -v "$(pwd)":"/home/$USERNAME/$WORKSPACE" \
     -w "/home/$USERNAME/$WORKSPACE" \
